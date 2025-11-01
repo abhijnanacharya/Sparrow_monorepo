@@ -2,6 +2,7 @@ from __future__ import annotations
 import logging
 from fastapi import HTTPException
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from contextlib import asynccontextmanager
 from app.models.AnalyzeRequest import AnalyzeRequest
@@ -22,7 +23,14 @@ app = FastAPI(
     version=settings.VERSION,
     docs_url="/docs" if settings.ENV != "production" else None,
 )
-
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"] if settings.allow_all_origins else settings.CORS_ORIGINS,
+    allow_credentials=settings.ALLOW_CREDENTIALS,
+    allow_methods=["*"],
+    allow_headers=["*"],
+    max_age=86400,
+)
 
 
 # Health-check
